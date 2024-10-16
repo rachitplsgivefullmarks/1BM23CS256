@@ -1,0 +1,110 @@
+#include<stdio.h>
+#include<string.h>
+#include<ctype.h>
+#define SIZE 100
+char stack[SIZE];
+int top=-1;
+void push(char a)
+{
+    if(top==(SIZE-1))
+    {
+    printf("Stack Overflow");
+    }
+    else
+    {
+    top=top+1;
+    stack[top]=a;
+    }
+}
+char pop()
+{
+    if (top==-1)
+    {
+    printf("Stack Underflow");
+    }
+    else
+    {
+    return stack[top--];
+    }
+}
+void display()
+{
+    if(top==-1)
+    {
+    printf("Stack Empty\n");
+    }
+    else
+    {
+        printf("Stack:\n");
+        for (int i=0;i<=top;i++)
+        {
+        printf("%c\n",stack[i]);
+        }
+    }
+}
+int isOper(char ch)
+{
+    return (ch=='+'||ch=='-'||ch=='*'||ch=='/'||ch=='^');
+}
+int pre(char op)
+{
+    switch(op)
+    {
+    case '^':return 3;
+    case '/':
+    case '*':return 2;
+    case '+':
+    case '-':return 1;
+    default: return 0;
+    }
+}
+void InfixtoPostfix(char infix[],char postfix[])
+{
+    int i,k=0;
+    char ch;
+    for(i=0;i<strlen(infix);i++)
+    {
+        ch=infix[i];
+        if(isalnum(ch))
+        {
+        postfix[k]=ch;
+        k++;
+        }
+        else if(ch=='(')
+        {
+        push(ch);
+        }
+        else if(ch==')')
+        {
+            while(top!=-1&&stack[top]!='(')
+            {
+            postfix[k]=pop();
+            }
+        pop();
+        }
+        else if(isOper(ch))
+        {
+            while(top!=-1&&pre(stack[top])>=pre(ch))
+            {
+            postfix[k]=pop();
+            }
+        push(ch);
+        }
+        display();
+    }
+    while(top!=-1)
+    {
+    postfix[k++]=pop();
+    }
+    postfix[k]='\0';
+}
+int main()
+{
+    char infix[SIZE];
+    char postfix[SIZE];
+    printf("Enter Infix Exp: ");
+    scanf("%s",infix);
+    InfixtoPostfix(infix,postfix);
+    printf("Postfix: %s", postfix);
+    return 0;
+}
